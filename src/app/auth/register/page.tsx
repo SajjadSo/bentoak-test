@@ -9,16 +9,14 @@ import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { useForm } from "react-hook-form";
+import { useForm, FieldValues } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-
-type FormData = {
-  firstname: string;
-  lastname: string;
-  email: string;
-  password: string;
-};
+import { zodResolver } from "@hookform/resolvers/zod";
+import registerSchema from "@/models/registerSchema";
+import { v4 as uuidv4 } from "uuid";
+import { User } from "@/models/user";
+import { addUser } from "@/services/user.service";
 
 export default function SignIn() {
   const router = useRouter();
@@ -28,10 +26,18 @@ export default function SignIn() {
     watch,
     handleSubmit,
     formState: { errors, isSubmitting }
-  } = useForm<FormData>();
+  } = useForm({ resolver: zodResolver(registerSchema) });
 
-  const onSubmit = (data: FormData) => {
-    console.log("data: ", data);
+  const onSubmit = async (data: FieldValues) => {
+    const user = { id: uuidv4(), ...data } as User;
+
+    try {
+      await addUser(user);
+      toast.success("User registered successfully.");
+      router.push("/auth/login");
+    } catch (error: any) {
+      toast.error(error.message);
+    }
   };
 
   return (
@@ -58,14 +64,12 @@ export default function SignIn() {
                 required
                 fullWidth
                 label="First Name"
-                {...register("firstname", {
-                  required: true
-                })}
+                {...register("firstname")}
                 error={Boolean(errors?.firstname)}
               />
               {errors?.firstname && (
                 <Typography component="h1" variant="subtitle2" color="red">
-                  First Name is required!
+                  {errors?.firstname.message?.toString()}
                 </Typography>
               )}
             </Grid>
@@ -74,14 +78,12 @@ export default function SignIn() {
                 required
                 fullWidth
                 label="Last Name"
-                {...register("lastname", {
-                  required: true
-                })}
+                {...register("lastname")}
                 error={Boolean(errors?.lastname)}
               />
               {errors?.lastname && (
                 <Typography component="h1" variant="subtitle2" color="red">
-                  Last Name is required!
+                  {errors?.lastname.message?.toString()}
                 </Typography>
               )}
             </Grid>
@@ -90,14 +92,12 @@ export default function SignIn() {
                 required
                 fullWidth
                 label="Email Address"
-                {...register("email", {
-                  required: true
-                })}
+                {...register("email")}
                 error={Boolean(errors?.email)}
               />
               {errors?.email && (
                 <Typography component="h1" variant="subtitle2" color="red">
-                  Email Address is required!
+                  {errors?.email.message?.toString()}
                 </Typography>
               )}
             </Grid>
@@ -107,12 +107,27 @@ export default function SignIn() {
                 fullWidth
                 label="Password"
                 type="password"
-                {...register("password", { required: true, minLength: 6 })}
+                {...register("password")}
                 error={Boolean(errors?.password)}
               />
               {errors?.password && (
                 <Typography component="h1" variant="subtitle2" color="red">
-                  Password length should be more than 6 characters!
+                  {errors?.password.message?.toString()}
+                </Typography>
+              )}
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                label="Confirm Password"
+                type="password"
+                {...register("confirmPassword")}
+                error={Boolean(errors?.confirmPassword)}
+              />
+              {errors?.confirmPassword && (
+                <Typography component="h1" variant="subtitle2" color="red">
+                  {errors?.confirmPassword.message?.toString()}
                 </Typography>
               )}
             </Grid>

@@ -9,13 +9,12 @@ import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { useForm } from "react-hook-form";
+import { useForm, FieldValues } from "react-hook-form";
 import { useRouter } from "next/navigation";
-
-type FormData = {
-  email: string;
-  password: string;
-};
+import toast from "react-hot-toast";
+import { zodResolver } from "@hookform/resolvers/zod";
+import loginSchema from "@/models/loginSchema";
+import { login } from "@/services/user.service";
 
 export default function SignIn() {
   const router = useRouter();
@@ -27,10 +26,16 @@ export default function SignIn() {
     resetField,
     handleSubmit,
     formState: { errors, isSubmitting }
-  } = useForm<FormData>();
+  } = useForm({ resolver: zodResolver(loginSchema) });
 
-  const onSubmit = (data: FormData) => {
-    console.log("data: ", data);
+  const onSubmit = async (data: FieldValues) => {
+    try {
+      await login(data);
+      toast.success("User logged in successfully.");
+      router.push("/");
+    } catch (error: any) {
+      toast.error(error.message);
+    }
   };
 
   return (

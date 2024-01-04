@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { styled } from "@mui/material/styles";
 import MuiDrawer from "@mui/material/Drawer";
@@ -21,6 +21,9 @@ import ListItemText from "@mui/material/ListItemText";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import BarChartIcon from "@mui/icons-material/BarChart";
+import LogoutIcon from "@mui/icons-material/Logout";
+import { logout } from "@/services/user.service";
+import toast from "react-hot-toast";
 
 const drawerWidth: number = 240;
 
@@ -71,11 +74,22 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: prop => prop !== "open" })
 }));
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
   const pathname = usePathname();
   const [appBarTitle, setAppBarTitle] = React.useState("Dashboard");
   const [open, setOpen] = React.useState(true);
   const toggleDrawer = () => {
     setOpen(!open);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      toast.success("User Logged out successfully.");
+      router.push("/auth/login");
+    } catch (error: any) {
+      toast.error(error.message);
+    }
   };
 
   return (
@@ -101,6 +115,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <Typography component="h1" variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }}>
             {appBarTitle}
           </Typography>
+          <IconButton color="inherit" onClick={handleLogout}>
+            <LogoutIcon />
+          </IconButton>
         </Toolbar>
       </AppBar>
 
