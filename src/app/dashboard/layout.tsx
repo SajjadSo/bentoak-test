@@ -131,7 +131,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           }}
         >
           <Typography component="h1" variant="h6" color="inherit" noWrap sx={{ flexGrow: 1, px: 1 }}>
-            Bent Oak Test
+            Next.js Mini Dashboard
           </Typography>
           <IconButton onClick={toggleDrawer}>
             <ChevronLeftIcon />

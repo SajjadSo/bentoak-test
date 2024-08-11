@@ -1,4 +1,4 @@
-# Bent Oak Systems - Test
+# Next.js Mini Dashboard
 
 # Material UI - Next.js App Router in TypeScript
 

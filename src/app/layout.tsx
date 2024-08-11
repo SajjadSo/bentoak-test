@@ -2,8 +2,8 @@ import { Toaster } from "react-hot-toast";
 import ThemeRegistry from "@/components/ThemeRegistry/ThemeRegistry";
 
 export const metadata = {
-  title: "Bent Oak Test",
-  description: "Bent Oak Test implemented by Sajjad Soroori"
+  title: "Next.js Mini Dashboard",
+  description: "Next.js Mini Dashboard"
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
